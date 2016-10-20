@@ -116,6 +116,9 @@ module HTTParty
 
     def json
       JSON.parse(body, :quirks_mode => true, :allow_nan => true)
+    rescue
+      body.gsub!("\xEF\xBB\xBF".force_encoding("UTF-8"), '')
+      JSON.parse(body, :quirks_mode => true, :allow_nan => true)
     end
 
     def csv
