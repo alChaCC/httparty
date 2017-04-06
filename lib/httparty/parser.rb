@@ -100,7 +100,13 @@ module HTTParty
     def parse
       return nil if body.nil?
       return nil if body == "null"
-      return nil if body.valid_encoding? && body.strip.empty?
+      begin
+        return nil if body.valid_encoding? && body.strip.empty?
+      rescue Encoding::CompatibilityError
+        body.force_encoding('UTF-8')
+      ensure
+        return nil if body.valid_encoding? && body.strip.empty?
+      end
       if supports_format?
         parse_supported_format
       else
